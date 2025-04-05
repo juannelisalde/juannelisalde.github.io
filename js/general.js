@@ -8,9 +8,6 @@ const hostDocument = "https://citas.usiese.gov.co:6007/odata/BaseConsulta/?tipo=
 
 const hostFolio = "https://citas.usiese.gov.co:6007/api/HistoriaClinica/HistoriaClinicaConsulta/ObtenerHistoricoFolios/?oidIngreso=0&directivas=true&hcUnificada=false&id=";
 
-// const user = "1110517355";
-// const pass = "JESSIc1910.,";
-
 const allData = [];
 
 const showSpinner = () => {

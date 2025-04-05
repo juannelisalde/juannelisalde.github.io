@@ -1,3 +1,5 @@
+// npx javascript-obfuscator c:\xampp\htdocs\juannelisalde.github.io\js\general.js --output c:\xampp\htdocs\juannelisalde.github.io\js\general.obfuscated.js
+
 const hostLogin = "https://citas.usiese.gov.co:6007/api/Generales/ApiGeSeguridad/IniciarSesionCentroAtencion";
 const dataLogin = {
   "oidUsuario":1436,

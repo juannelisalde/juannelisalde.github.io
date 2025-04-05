@@ -37,7 +37,19 @@
   </div>
   
   <script src="js/jquery-3.7.1.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/general.js"></script>
+  <script src="js/bootstrap.min.js"></script> 
+  <script>
+    const isProduction = true;
+    if (isProduction) {
+      const script = document.createElement("script");
+      script.src = "js/general.obfuscated.js";
+      document.head.appendChild(script);
+    } else {
+      const script = document.createElement("script");
+      script.src = "js/general.js";
+      document.head.appendChild(script);
+    }
+    script.defer = true;
+  </script>
 </body>
 </html>

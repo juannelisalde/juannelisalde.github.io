@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/general.css">
+  <title>IPS</title>
+</head>
+<body>
+  <div id="spinner" style="text-align: center; margin-top: 20px;" class="d-none">
+    <div class="loader"></div>
+    <p>Procesando...</p>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header text-center bg-primary text-white">
+        <h5>IPS</h5>
+      </div>
+      <div class="card-body">
+        <form id="formDocuments">
+          <label for="ip" class="form-label">Documentos:</label>
+          <textarea class="form-control" id="documents" name="documents" rows="10" placeholder="Escribe los documentos separados por coma aquí.." required></textarea>
+          <button type="submit" class="btn btn-primary mt-2">Generar CSV</button>
+        </form>
+      </div>
+    </div>
+    <div class="card mt-3">
+      <div class="card-header text-center bg-primary text-white">
+        <h5>Contenido CSV</h5>
+      </div>
+      <div class="card-body" id="resultContainer">
+      </div>
+    </div>
+  </div>
+  
+  <script src="js/jquery-3.7.1.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/general.js"></script>
+</body>
+</html>

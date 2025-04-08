@@ -2,7 +2,7 @@
 
 const hostLogin = "https://citas.usiese.gov.co:6007/api/Generales/ApiGeSeguridad/IniciarSesionCentroAtencion";
 const dataLogin = {
-  "oidUsuario":1436,
+  "oidUsuario":1,
   "oidCentroAtencion":1
 };
 

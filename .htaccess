@@ -1,3 +1,0 @@
-<FilesMatch "\.js$">
-  Require all denied
-</FilesMatch>

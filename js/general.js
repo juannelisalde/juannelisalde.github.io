@@ -12,6 +12,9 @@ const hostFolio = "https://citas.usiese.gov.co:6007/api/HistoriaClinica/Historia
 
 const allData = [];
 
+const noPrintEspecialidad = ["ODONTOLOGIA GENERAL"];
+const noPrintDiagnostico = ["CARIES DE LA DENTINA"];
+
 const showSpinner = () => {
   $("#spinner").removeClass("d-none")
 };
@@ -51,9 +54,7 @@ $("#formDocuments").on("submit", function (e) {
   showSpinner();
   $.each(documents, function (index, document) {
     getDocument(document).then(() => {
-      completedRequests++; // Incrementar el contador cuando una petición se complete
-
-      // Si todas las peticiones han finalizado
+      completedRequests++; 
       if (completedRequests === totalRequests) {
         hideSpinner();
         exportResultContainerToCSV("Resultados");
@@ -95,9 +96,15 @@ const getFolio = (oid) => {
       success: function (response) {
         if (response.length > 0) {
           const folioInfoArray = response.map((folio) => {
-            const { TipoHistoria, Especialidad, Fecha } = folio;
-            return `Tipo Historia: ${TipoHistoria}, Especialidad: ${Especialidad}, Fecha: ${formatDate(Fecha)}`;
-          });
+            const { TipoHistoria, Especialidad, Fecha, Diagnostico } = folio;
+            if(!noPrintEspecialidad.includes(Especialidad) && !noPrintDiagnostico.includes(Diagnostico)){
+              return `Tipo Historia: ${TipoHistoria}, Especialidad: ${Especialidad}, Fecha: ${formatDate(Fecha)}`;
+            }
+          })
+          .filter((item) => item !== undefined); 
+          if(folioInfoArray.length == 0){
+            resolve(`No se encontraron folios`);  
+          }
           resolve(folioInfoArray);
         } else {
           resolve(`No se encontraron folios`);

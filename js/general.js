@@ -25,12 +25,21 @@ const hideSpinner = () => {
 
 $("#documents").on("input", function () {
   const validCharacters = /^[0-9,\s]*$/;
-  const value = $(this).val();
+  let value = $(this).val();
+
+  // Reemplazar saltos de línea (\n) por comas (,)
+  value = value.replace(/[\n\r]+/g, ",");
 
   if (!validCharacters.test(value)) {
-    $(this).val(value.replace(/[^0-9,\s]/g, ""));
+    value = value.replace(/[^0-9,\s]/g, "");
   }
+  
+  value = value.replace(/^,|,$/g, "");
+  $(this).val(value);
 });
+
+// al pegar del escel reemplazar saltos de linea por ,
+
 
 $("#formDocuments").on("submit", function (e) {
   e.preventDefault();

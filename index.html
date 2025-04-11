@@ -24,11 +24,12 @@
           <label for="ip" class="form-label">Documentos:</label>
           <textarea class="form-control" id="documents" name="documents" rows="10" placeholder="Escribe los documentos separados por coma aquí.." required></textarea>
           <button type="submit" class="btn btn-primary mt-2">Generar CSV</button>
+          <button type="button" class="btn btn-success mt-2" id="downloadCSV">Descargar CSV</button>
         </form>
       </div>
     </div>
     <div class="card mt-3">
-      <div class="card-header text-center bg-primary text-white bg-success">
+      <div class="card-header text-center bg-primary text-white bg-secondary">
         <h5>Contenido CSV</h5>
       </div>
       <div class="card-body" id="resultContainer">
@@ -38,6 +39,7 @@
   
   <script src="js/jquery-3.7.1.js"></script>
   <script src="js/bootstrap.min.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script>
     
     if (!window.location.hostname.includes("localhost")) {

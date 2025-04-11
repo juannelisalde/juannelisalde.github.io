@@ -6,22 +6,20 @@ const dataLogin = {
   "oidCentroAtencion":1
 };
 
-const hostDocument = "https://citas.usiese.gov.co:6007/odata/BaseConsulta/?tipo=Generales.GEENPaciente&%24select=Oid%2CDocumento%2CTipoDocumento%2CNombreCompleto%2CCarpeta1%2CCodigoCotizante%2CSexo%2CEstadoPaciente%2CRecienNacido%2CHistoriaCl%C3%ADnicaBloqueada&%24filter=Documento%20eq%20";
+// const hostDocument = "https://citas.usiese.gov.co:6007/odata/BaseConsulta/?tipo=Generales.GEENPaciente&%24select=Oid%2CDocumento%2CTipoDocumento%2CNombreCompleto%2CCarpeta1%2CCodigoCotizante%2CSexo%2CEstadoPaciente%2CRecienNacido%2CHistoriaCl%C3%ADnicaBloqueada&%24filter=Documento%20eq%20";
+const hostDocument = "https://citas.usiese.gov.co:6007/api/Generales/ApiGeReporteGenerado/ExportarReporte";
 
 const hostFolio = "https://citas.usiese.gov.co:6007/api/HistoriaClinica/HistoriaClinicaConsulta/ObtenerHistoricoFolios/?oidIngreso=0&directivas=true&hcUnificada=false&id=";
 
-const allData = [];
+let allData = [];
 
 const noPrintEspecialidad = ["ODONTOLOGIA GENERAL"];
 const noPrintDiagnostico = ["CARIES DE LA DENTINA"];
+const noImprimir = ["MEDICINA GENERAL", "CONSULTA EXTERNA", "URGENCIAS", "TRIAGE"];
 
-const showSpinner = () => {
-  $("#spinner").removeClass("d-none")
-};
+const showSpinner = () => {$("#spinner").removeClass("d-none")};
 
-const hideSpinner = () => {
-  $("#spinner").addClass("d-none")
-};
+const hideSpinner = () => {$("#spinner").addClass("d-none")};
 
 $("#documents").on("input", function () {
   const validCharacters = /^[0-9,\s]*$/;
@@ -38,38 +36,39 @@ $("#documents").on("input", function () {
   $(this).val(value);
 });
 
-// al pegar del escel reemplazar saltos de linea por ,
-
-
-$("#formDocuments").on("submit", function (e) {
+$("#formDocuments").on("submit", async function (e) {
   e.preventDefault();
   $("#resultContainer").empty();
-  allData.length = 0; 
+  allData = []; // Reiniciar el array allData
 
   let documents = $("#documents").val().split(",");
   documents = documents.map((doc) => doc.trim());
   documents.sort((a, b) => a - b);
-  documents = [...new Set(documents)]; 
-  documents = documents.filter((doc) => doc !== "" && doc.length > 0); 
+  documents = [...new Set(documents)];
+  documents = documents.filter((doc) => doc !== "" && doc.length > 0);
 
   if (documents.length === 0) {
     alert("No se encontraron documentos válidos.");
     return;
   }
 
-  let completedRequests = 0; 
-  const totalRequests = documents.length; 
-
   showSpinner();
-  $.each(documents, function (index, document) {
-    getDocument(document).then(() => {
-      completedRequests++; 
-      if (completedRequests === totalRequests) {
-        hideSpinner();
-        exportResultContainerToCSV("Resultados");
-      }
-    });
-  });
+
+  try {
+    await Promise.all(documents.map((document) => getDocument(document)));
+    hideSpinner();
+  } catch (error) {
+    console.error("Error al procesar los documentos:", error);
+    hideSpinner();
+  }
+});
+
+$("#downloadCSV").on("click", function () {
+  if($("#resultContainer").children().length === 0){
+    alert("No hay datos para descargar.");
+    return;
+  }
+  exportResultContainerToCSV("Resultado.csv");
 });
 
 const getToken =  () => {
@@ -94,72 +93,142 @@ const getToken =  () => {
   });
 }
 
-const getFolio = (oid) => {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: `${hostFolio}${oid}`,
-      type: "GET",
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-      success: function (response) {
-        if (response.length > 0) {
-          const folioInfoArray = response.map((folio) => {
-            const { TipoHistoria, Especialidad, Fecha, Diagnostico } = folio;
-            if(!noPrintEspecialidad.includes(Especialidad) && !noPrintDiagnostico.includes(Diagnostico)){
-              return `Tipo Historia: ${TipoHistoria}, Especialidad: ${Especialidad}, Fecha: ${formatDate(Fecha)}`;
-            }
-          })
-          .filter((item) => item !== undefined); 
-          if(folioInfoArray.length == 0){
-            resolve(`No se encontraron folios`);  
+const getParams = (document) => {
+  return encodeURIComponent(
+    JSON.stringify({
+      "Nombre": "SERVICIOS PRESTADOS A PACIENTES",
+      "Descripcion": "SERVICIOS PRESTADOS A PACIENTES",
+      "SentenciaSQL": "",
+      "Estado": "Activo",
+      "Parametros": [
+          {
+              "Nombre": "DOCUMENTO",
+              "Campo": "GENPACIEN.PACNUMDOC =",
+              "Tipo": "String",
+              "DbNombre": "DOCUMENTO",
+              "DbNombreCompleto": "@DOCUMENTO",
+              "DbTamano": 30,
+              "DbTipo": "String",
+              "Valor": document,
+              "Oid": 1,
+              "IdBloqueo": null,
+              "RegistroEliminado": false,
+              "OidResult": null
           }
-          resolve(folioInfoArray);
-        } else {
-          resolve(`No se encontraron folios`);
-        }
-      },
-      error: function (error) {
-        console.error("Error al obtener el folio:", error);
-        reject(error);
-      },
+      ],
+      "formato": "XLSX PLANO",
+      "SerializadoXml": true,
+      "Oid": 26, //  26
+      "IdBloqueo": null,
+      "RegistroEliminado": false,
+      "OidResult": null
+  }));
+}
+
+// retornar data
+const readExcelFromBlob = (blob) => {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+
+    // Leer la primera hoja
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+
+    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }); 
+    
+    // Iterar sobre las filas del JSON
+    jsonData.forEach((row, index) => {
+      if (index > 0) { // Ignorar la primera fila (encabezados)
+        let PACNUMDOC = row[1];
+        let NOMBRE = row[2] + " " + row[3] + " " + row[4] + " " + row[5];
+        let SEXO = row[6];
+        let EDAD_ACTUAL = row[8];
+        let EDAD_SERVICIO = row[9];
+        let SIPCODIGO = row[20];
+        let SIPNOMBRE = row[21];
+        let SERFECSER = excelDateToJSDate(row[30]);
+
+        // Agregar los datos al contenedor
+        $("#resultContainer").append(
+          `<p>${PACNUMDOC}, ${NOMBRE}, ${SEXO}, ${EDAD_ACTUAL}, ${EDAD_SERVICIO}, ${SIPCODIGO}, ${SIPNOMBRE}, ${excelDateToJSDate(SERFECSER)}</p>`
+        );
+      }
     });
-  });
+  }
+  reader.readAsArrayBuffer(blob);
+}
+
+const excelDateToJSDate = (serial) => {
+  // El número 25569 corresponde al 1 de enero de 1970 en el sistema de fechas de Excel
+  const utcDays = serial - 25569; 
+  const utcValue = utcDays * 86400; // Convertir días a segundos
+  const dateInfo = new Date(utcValue * 1000); // Crear un objeto Date en milisegundos
+
+  // Formatear la fecha a DD/MM/YYYY
+  const day = String(dateInfo.getUTCDate()).padStart(2, "0");
+  const month = String(dateInfo.getUTCMonth() + 1).padStart(2, "0");
+  const year = dateInfo.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
 };
 
 const getDocument = (document) => {
+  if ($("#resultContainer").children().length === 0) {
+    $("#resultContainer").append(`<p><b>PACNUMDOC; NOMBRE; SEXO; EDAD_ACTUAL; EDAD_SERVICIO; SIPCODIGO; SIPNOMBRE; SERFECSER</b></p>`);
+  }
+
   return new Promise((resolve) => {
     $.ajax({
-      url: `${hostDocument}%27${document}%27`,
+      url: hostDocument,
       type: "GET",
       headers: {
+        repparams: getParams(document),
         Authorization: `Bearer ${getToken()}`,
       },
+      xhrFields: {
+        responseType: "blob",
+      },
       success: function (response) {
-        if (response.value.length > 0) {
-          const data = response.value[0];
-          const { NombreCompleto, Oid, Documento } = data;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
 
-          getFolio(Oid).then((folioInfo) => {
-            const folioContent = Array.isArray(folioInfo) ? folioInfo : [folioInfo];
+          // Leer la primera hoja
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
 
-            // Escribir en el contenedor en formato similar al Excel
-            $("#resultContainer").append(`<p><b>${Documento}, Nombre: ${NombreCompleto}</b></p>`);
-            folioContent.forEach((folio) => {
-              $("#resultContainer").append(`<p>${document},${folio}</p>`);
-            });
+          const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-            // Agregar una línea en blanco para separar documentos
-            $("#resultContainer").append(`<br>`);
-            resolve(); // Resolver la promesa cuando se complete
+          // Iterar sobre las filas del JSON
+          jsonData.forEach((row, index) => {
+            if (index > 0) { // Ignorar la primera fila (encabezados)
+              const PACNUMDOC = row[1];
+              const NOMBRE = replaceAccents(`${row[2]} ${row[3]} ${row[4]} ${row[5]}`);
+              const SEXO = row[6];
+              const EDAD_ACTUAL = replaceAccents(row[8]);
+              const EDAD_SERVICIO = replaceAccents(row[9]);
+              const SIPCODIGO = row[20];
+              const SIPNOMBRE = replaceAccents(row[21]);
+              const SERFECSER = excelDateToJSDate(row[30]);
+
+              if (noImprimir.some((item) => SIPNOMBRE.includes(item.toUpperCase()))) {
+                return;
+              }
+
+              if(!PACNUMDOC){
+                $("#resultContainer").append(`<p>${document}; No encontrado</p>`);
+                return;
+              }
+
+              $("#resultContainer").append(`<p>${PACNUMDOC}; ${NOMBRE}; ${SEXO}; ${EDAD_ACTUAL}; ${EDAD_SERVICIO}; ${SIPCODIGO}; ${SIPNOMBRE}; ${SERFECSER}</p>`);
+            }
           });
-        } else {
-          // Escribir respuesta de documento no encontrado
-          $("#resultContainer").append(`<p><b>${document}, No encontrado</b></p>`);
-          $("#resultContainer").append(`<p>No encontrado</p>`);
-          $("#resultContainer").append(`<br>`);
-          resolve(); // Resolver la promesa cuando se complete
-        }
+        };
+        reader.readAsArrayBuffer(response);
+        resolve();
       },
       error: function (error) {
         console.error("Error al obtener el documento:", error);
@@ -171,8 +240,6 @@ const getDocument = (document) => {
 
 const exportResultContainerToCSV = (fileName) => {
   const rows = [];
-  rows.push("Documento,Nombre,Fecha");
-
   $("#resultContainer").children().each(function () {
     const text = $(this).text().trim();
     if (text) {
@@ -194,10 +261,7 @@ const exportResultContainerToCSV = (fileName) => {
   document.body.removeChild(link);
 };
 
-const formatDate = (isoDate) => {
-  const date = new Date(isoDate);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+const replaceAccents = (text) => {
+  if (!text) return ""; 
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };

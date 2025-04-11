@@ -203,6 +203,7 @@ const getDocument = (document) => {
           const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
           // Iterar sobre las filas del JSON
+          let finded = false;
           jsonData.forEach((row, index) => {
             if (index > 0) { // Ignorar la primera fila (encabezados)
               const PACNUMDOC = row[1];
@@ -219,13 +220,18 @@ const getDocument = (document) => {
               }
 
               if(!PACNUMDOC){
-                $("#resultContainer").append(`<p>${document}; No encontrado</p>`);
+                $("#resultContainer").append(`<p>${document}; sin citas</p>`);
+                finded = true;
                 return;
               }
 
               $("#resultContainer").append(`<p>${PACNUMDOC}; ${NOMBRE}; ${SEXO}; ${EDAD_ACTUAL}; ${EDAD_SERVICIO}; ${SIPCODIGO}; ${SIPNOMBRE}; ${SERFECSER}</p>`);
+              finded = true;
             }
           });
+          if(!finded){
+            $("#resultContainer").append(`<p>${document}; sin PM</p>`);
+          }
         };
         reader.readAsArrayBuffer(response);
         resolve();

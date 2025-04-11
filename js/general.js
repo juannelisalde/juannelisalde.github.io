@@ -22,17 +22,17 @@ const showSpinner = () => {$("#spinner").removeClass("d-none")};
 const hideSpinner = () => {$("#spinner").addClass("d-none")};
 
 $("#documents").on("input", function () {
-  const validCharacters = /^[0-9,\s]*$/;
+  const validCharacters = /^[0-9,\s]*$/; // Permitir números, comas y espacios
   let value = $(this).val();
 
   // Reemplazar saltos de línea (\n) por comas (,)
   value = value.replace(/[\n\r]+/g, ",");
 
+  // Validar caracteres permitidos
   if (!validCharacters.test(value)) {
-    value = value.replace(/[^0-9,\s]/g, "");
+    value = value.replace(/[^0-9,\s,]/g, ""); // Eliminar caracteres no válidos
   }
-  
-  value = value.replace(/^,|,$/g, "");
+  // Actualizar el valor del campo
   $(this).val(value);
 });
 

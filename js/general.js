@@ -15,7 +15,7 @@ let allData = [];
 
 const noPrintEspecialidad = ["ODONTOLOGIA GENERAL"];
 const noPrintDiagnostico = ["CARIES DE LA DENTINA"];
-const noImprimir = ["MEDICINA GENERAL", "CONSULTA EXTERNA", "URGENCIAS", "TRIAGE"];
+const noImprimir = ["CONSULTA EXTERNA", "URGENCIAS", "TRIAGE"];
 
 const showSpinner = () => {$("#spinner").removeClass("d-none")};
 

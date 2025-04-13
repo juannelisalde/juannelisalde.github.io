@@ -43,7 +43,6 @@ $("#formDocuments").on("submit", async function (e) {
 
   let documents = $("#documents").val().split(",");
   documents = documents.map((doc) => doc.trim());
-  documents.sort((a, b) => a - b);
   documents = [...new Set(documents)];
   documents = documents.filter((doc) => doc !== "" && doc.length > 0);
 

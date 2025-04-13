@@ -204,6 +204,7 @@ const getDocument = (document) => {
 
           // Iterar sobre las filas del JSON
           let finded = false;
+          let SIPCODIGOS = [];
           jsonData.forEach((row, index) => {
             if (index > 0) { // Ignorar la primera fila (encabezados)
               const PACNUMDOC = row[1];
@@ -225,7 +226,11 @@ const getDocument = (document) => {
                 return;
               }
 
-              $("#resultContainer").append(`<p>${PACNUMDOC}; ${NOMBRE}; ${SEXO}; ${EDAD_ACTUAL}; ${EDAD_SERVICIO}; ${SIPCODIGO}; ${SIPNOMBRE}; ${SERFECSER}</p>`);
+              if (!SIPCODIGOS.includes(SIPCODIGO)) {
+                $("#resultContainer").append(`<p>${PACNUMDOC}; ${NOMBRE}; ${SEXO}; ${EDAD_ACTUAL}; ${EDAD_SERVICIO}; ${SIPCODIGO}; ${SIPNOMBRE}; ${SERFECSER}</p>`);
+              } 
+
+              SIPCODIGOS.push(SIPCODIGO);
               finded = true;
             }
           });

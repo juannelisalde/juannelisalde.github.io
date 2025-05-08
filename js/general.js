@@ -21,6 +21,12 @@ const showSpinner = () => {$("#spinner").removeClass("d-none")};
 
 const hideSpinner = () => {$("#spinner").addClass("d-none")};
 
+$(".clean").on("click", function () {
+  $(this).parent().find("input").val("");
+  $(this).parent().find("textarea").val("");
+  $(".results").addClass("d-none");
+});
+
 $("#documents").on("input", function () {
   const validCharacters = /^[0-9,\s]*$/; // Permitir números, comas y espacios
   let value = $(this).val();
@@ -56,6 +62,7 @@ $("#formDownloadDates").on("submit", async function (e) {
 
   try {
     await Promise.all(documents.map((document) => getDocument(document)));
+    $("#resultContainerDownloadDatesCard").removeClass("d-none");
     hideSpinner();
   } catch (error) {
     console.error("Error al procesar los documentos:", error);
@@ -332,6 +339,6 @@ $("#formFormatDates").on("submit", async function (e) {
   processedDates.forEach((date) => {
     $("#resultContainerFormatDates").append(`${date}</br>`);
   });
-
+  $("#resultContainerFormatDatesCard").removeClass("d-none");
   hideSpinner();
 });

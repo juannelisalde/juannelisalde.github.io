@@ -39,10 +39,11 @@
               <textarea class="form-control" id="documents" name="documents" rows="10" placeholder="Escribe o copia y pegua desde excel los documentos separados por coma aquí.." required></textarea>
               <button type="submit" class="btn btn-primary mt-2">Generar CSV</button>
               <button type="button" class="btn btn-success mt-2" id="downloadCSV">Descargar CSV</button>
+              <button type="button" class="btn btn-secondary mt-2 clean">Limpiar</button>
             </form>
           </div>
         </div>
-        <div class="card mt-3">
+        <div class="card mt-3 d-none results" id="resultContainerDownloadDatesCard">
           <div class="card-header text-center bg-primary text-white bg-secondary">
             <h5>Contenido CSV</h5>
           </div>
@@ -62,10 +63,11 @@
               <label for="ip" class="form-label">Fechas:</label>
               <textarea class="form-control" id="dates" name="dates" rows="10" placeholder="Escribe o copiar y pega desde excel las fechas..." required></textarea>
               <button type="submit" class="btn btn-primary mt-2">formatear fechas</button>
+              <button type="button" class="btn btn-secondary mt-2 clean">Limpiar</button>
             </form>
           </div>
         </div>
-        <div class="card mt-3">
+        <div class="card mt-3 d-none results" id="resultContainerFormatDatesCard">
           <div class="card-header text-center bg-primary text-white bg-secondary">
             <h5>Fechas formateadas</h5>
           </div>

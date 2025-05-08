@@ -15,24 +15,63 @@
   </div>
 
   <div class="container">
-    <div class="card">
-      <div class="card-header text-center bg-primary text-white">
-        <h5>IPS</h5>
+    <!-- Menú de navegación -->
+    <ul class="nav nav-tabs" id="menuTabs" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" id="dowloadDates-tab" data-bs-toggle="tab" data-bs-target="#dowloadDates" type="button" role="tab" aria-controls="dowloadDates" aria-selected="true">Descarga citas</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="formatDates-tab" data-bs-toggle="tab" data-bs-target="#menu2" type="button" role="tab" aria-controls="menu2" aria-selected="false">Formatea fechas</button>
+      </li>
+    </ul>
+
+    <!-- Contenido de los menús -->
+    <div class="tab-content" id="menuContent">
+      <!-- Menú descarga citas -->
+      <div class="tab-pane fade show active" id="dowloadDates" role="tabpanel" aria-labelledby="dowloadDates-tab">
+        <div class="card">
+          <div class="card-header text-center bg-primary text-white">
+            <h5>IPS</h5>
+          </div>
+          <div class="card-body">
+            <form id="formDownloadDates">
+              <label for="ip" class="form-label">Documentos:</label>
+              <textarea class="form-control" id="documents" name="documents" rows="10" placeholder="Escribe o copia y pegua desde excel los documentos separados por coma aquí.." required></textarea>
+              <button type="submit" class="btn btn-primary mt-2">Generar CSV</button>
+              <button type="button" class="btn btn-success mt-2" id="downloadCSV">Descargar CSV</button>
+            </form>
+          </div>
+        </div>
+        <div class="card mt-3">
+          <div class="card-header text-center bg-primary text-white bg-secondary">
+            <h5>Contenido CSV</h5>
+          </div>
+          <div class="card-body" id="resultContainerDownloadDates">
+          </div>
+        </div>
       </div>
-      <div class="card-body">
-        <form id="formDocuments">
-          <label for="ip" class="form-label">Documentos:</label>
-          <textarea class="form-control" id="documents" name="documents" rows="10" placeholder="Escribe los documentos separados por coma aquí.." required></textarea>
-          <button type="submit" class="btn btn-primary mt-2">Generar CSV</button>
-          <button type="button" class="btn btn-success mt-2" id="downloadCSV">Descargar CSV</button>
-        </form>
-      </div>
-    </div>
-    <div class="card mt-3">
-      <div class="card-header text-center bg-primary text-white bg-secondary">
-        <h5>Contenido CSV</h5>
-      </div>
-      <div class="card-body" id="resultContainer">
+
+      <!-- Menú formatear fehcas -->
+      <div class="tab-pane fade" id="menu2" role="tabpanel" aria-labelledby="menu2-tab">
+        <div class="card mt-3">
+          <div class="card-header text-center bg-secondary text-white">
+            <h5>Menú 2</h5>
+          </div>
+          <div class="card-body">
+            <form id="formFormatDates">
+              <label for="ip" class="form-label">Fechas:</label>
+              <textarea class="form-control" id="dates" name="dates" rows="10" placeholder="Escribe o copiar y pega desde excel las fechas..." required></textarea>
+              <button type="submit" class="btn btn-primary mt-2">formatear fechas</button>
+            </form>
+          </div>
+        </div>
+        <div class="card mt-3">
+          <div class="card-header text-center bg-primary text-white bg-secondary">
+            <h5>Fechas formateadas</h5>
+          </div>
+          <div class="card-body" id="resultContainerFormatDates">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -41,7 +80,6 @@
   <script src="js/bootstrap.min.js"></script> 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    
     if (!window.location.hostname.includes("localhost")) {
       const script = document.createElement("script");
       script.src = "js/general.obfuscated.js";

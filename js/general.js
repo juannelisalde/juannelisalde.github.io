@@ -36,9 +36,9 @@ $("#documents").on("input", function () {
   $(this).val(value);
 });
 
-$("#formDocuments").on("submit", async function (e) {
+$("#formDownloadDates").on("submit", async function (e) {
   e.preventDefault();
-  $("#resultContainer").empty();
+  $("#resultContainerDownloadDates").empty();
   allData = []; // Reiniciar el array allData
 
   let documents = $("#documents").val().split(",");
@@ -64,7 +64,7 @@ $("#formDocuments").on("submit", async function (e) {
 });
 
 $("#downloadCSV").on("click", function () {
-  if($("#resultContainer").children().length === 0){
+  if($("#resultContainerDownloadDates").children().length === 0){
     alert("No hay datos para descargar.");
     return;
   }
@@ -151,7 +151,7 @@ const readExcelFromBlob = (blob) => {
         let SERFECSER = excelDateToJSDate(row[30]);
 
         // Agregar los datos al contenedor
-        $("#resultContainer").append(
+        $("#resultContainerDownloadDates").append(
           `<p>${PACNUMDOC}, ${NOMBRE}, ${SEXO}, ${EDAD_ACTUAL}, ${EDAD_SERVICIO}, ${SIPCODIGO}, ${SIPNOMBRE}, ${excelDateToJSDate(SERFECSER)}</p>`
         );
       }
@@ -175,8 +175,8 @@ const excelDateToJSDate = (serial) => {
 };
 
 const getDocument = (document) => {
-  if ($("#resultContainer").children().length === 0) {
-    $("#resultContainer").append(`<p><b>PACNUMDOC; NOMBRE; SEXO; EDAD_ACTUAL; EDAD_SERVICIO; SIPCODIGO; SIPNOMBRE; SERFECSER</b></p>`);
+  if ($("#resultContainerDownloadDates").children().length === 0) {
+    $("#resultContainerDownloadDates").append(`<p><b>PACNUMDOC; NOMBRE; SEXO; EDAD_ACTUAL; EDAD_SERVICIO; SIPCODIGO; SIPNOMBRE; SERFECSER</b></p>`);
   }
 
   return new Promise((resolve) => {
@@ -221,13 +221,13 @@ const getDocument = (document) => {
               }
 
               if(!PACNUMDOC){
-                $("#resultContainer").append(`<p>${document}; sin citas</p>`);
+                $("#resultContainerDownloadDates").append(`<p>${document}; sin citas</p>`);
                 finded = true;
                 return;
               }
 
               if (!SIPCODIGOS.includes(SIPCODIGO)) {
-                $("#resultContainer").append(`<p>${PACNUMDOC}; ${NOMBRE}; ${SEXO}; ${EDAD_ACTUAL}; ${EDAD_SERVICIO}; ${SIPCODIGO}; ${SIPNOMBRE}; ${SERFECSER}</p>`);
+                $("#resultContainerDownloadDates").append(`<p>${PACNUMDOC}; ${NOMBRE}; ${SEXO}; ${EDAD_ACTUAL}; ${EDAD_SERVICIO}; ${SIPCODIGO}; ${SIPNOMBRE}; ${SERFECSER}</p>`);
               } 
 
               SIPCODIGOS.push(SIPCODIGO);
@@ -235,7 +235,7 @@ const getDocument = (document) => {
             }
           });
           if(!finded){
-            $("#resultContainer").append(`<p>${document}; sin PM</p>`);
+            $("#resultContainerDownloadDates").append(`<p>${document}; sin PM</p>`);
           }
         };
         reader.readAsArrayBuffer(response);
@@ -251,7 +251,7 @@ const getDocument = (document) => {
 
 const exportResultContainerToCSV = (fileName) => {
   const rows = [];
-  $("#resultContainer").children().each(function () {
+  $("#resultContainerDownloadDates").children().each(function () {
     const text = $(this).text().trim();
     if (text) {
       rows.push(text);
@@ -276,3 +276,62 @@ const replaceAccents = (text) => {
   if (!text) return ""; 
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
+
+$("#formFormatDates").on("submit", async function (e) {
+  e.preventDefault();
+  showSpinner();
+  $("#resultContainerFormatDates").empty();
+  dates.map((date) => {
+    const parts = date.split("/"); // Dividir la fecha en partes (día, mes, año)
+    if (parts.length !== 3) {
+      return "Fecha inválida"; // Si no tiene el formato esperado, marcar como inválida
+    }
+
+    let [day, month, year] = parts.map((part) => parseInt(part, 10)); // Convertir a números
+
+    // Si el día es mayor a 12, asumimos que ya está en formato dd/mm/yyyy
+    if (day > 12) {
+      return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
+    }
+
+    // Si el día es menor o igual a 12, asumimos que está en formato mm/dd/yyyy y lo convertimos
+    return `${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}/${year}`;
+  });
+  hideSpinner();
+  
+});
+
+const processDates = (dates) => {
+  return dates.map((date) => {
+    const parts = date.split("/");
+    if (parts.length !== 3) {
+      return "Fecha inválida"; 
+    }
+
+    let [day, month, year] = parts.map((part) => parseInt(part, 10));
+
+    if (day > 12) {
+      return `${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}/${year}`;
+    }
+
+    return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
+  });
+};
+
+$("#formFormatDates").on("submit", async function (e) {
+  e.preventDefault();
+  showSpinner();
+  $("#resultContainerFormatDates").empty();
+  
+  let dates = $("#dates").val().replace(/[\n\r]+/g, ",").split(",");
+  dates = dates.map((date) => date.trim());
+  dates = dates.filter((date) => date !== "");
+
+  const processedDates = processDates(dates);
+
+  processedDates.forEach((date) => {
+    $("#resultContainerFormatDates").append(`${date}</br>`);
+  });
+
+  hideSpinner();
+});

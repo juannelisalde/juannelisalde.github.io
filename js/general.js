@@ -311,10 +311,10 @@ const processDates = (dates) => {
     let [day, month, year] = parts.map((part) => parseInt(part, 10));
 
     if (day > 12) {
-      return `${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}/${year}`;
+      return `${String(day).padStart(2)}/${String(month).padStart(2)}/${year}`;
     }
 
-    return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
+    return `${String(month).padStart(2)}/${String(day).padStart(2)}/${year}`;
   });
 };
 

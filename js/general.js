@@ -284,30 +284,6 @@ const replaceAccents = (text) => {
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
-$("#formFormatDates").on("submit", async function (e) {
-  e.preventDefault();
-  showSpinner();
-  $("#resultContainerFormatDates").empty();
-  dates.map((date) => {
-    const parts = date.split("/"); // Dividir la fecha en partes (día, mes, año)
-    if (parts.length !== 3) {
-      return "Fecha inválida"; // Si no tiene el formato esperado, marcar como inválida
-    }
-
-    let [day, month, year] = parts.map((part) => parseInt(part, 10)); // Convertir a números
-
-    // Si el día es mayor a 12, asumimos que ya está en formato dd/mm/yyyy
-    if (day > 12) {
-      return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
-    }
-
-    // Si el día es menor o igual a 12, asumimos que está en formato mm/dd/yyyy y lo convertimos
-    return `${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}/${year}`;
-  });
-  hideSpinner();
-  
-});
-
 const processDates = (dates) => {
   return dates.map((date) => {
     const parts = date.split("/");

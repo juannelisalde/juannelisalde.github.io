@@ -18,20 +18,44 @@
     <!-- Menú de navegación -->
     <ul class="nav nav-tabs" id="menuTabs" role="tablist">
       <li class="nav-item">
-        <button class="nav-link active" id="dowloadDates-tab" data-bs-toggle="tab" data-bs-target="#dowloadDates" type="button" role="tab" aria-controls="dowloadDates" aria-selected="true">Descarga citas</button>
+        <button class="nav-link active" id="formatDates-tab" data-bs-toggle="tab" data-bs-target="#formaDates" type="button" role="tab" aria-controls="formaDates" aria-selected="false">Formatea fechas</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link" id="formatDates-tab" data-bs-toggle="tab" data-bs-target="#formaDates" type="button" role="tab" aria-controls="formaDates" aria-selected="false">Formatea fechas</button>
+        <button class="nav-link" id="dowloadDates-tab" data-bs-toggle="tab" data-bs-target="#dowloadDates" type="button" role="tab" aria-controls="dowloadDates" aria-selected="true">Descarga citas</button>
       </li>
     </ul>
 
     <!-- Contenido de los menús -->
     <div class="tab-content" id="menuContent">
+      <!-- Menú formatear fehcas -->
+      <div class="tab-pane fade show active" id="formaDates" role="tabpanel" aria-labelledby="formaDates-tab">
+        <div class="card">
+          <div class="card-header text-center bg-success text-white">
+            <h5>Formatear Fechas</h5>
+          </div>
+          <div class="card-body">
+            <form id="formFormatDates">
+              <label for="ip" class="form-label">Fechas:</label>
+              <textarea class="form-control" id="dates" name="dates" rows="10" placeholder="Escribe o copiar y pega desde excel las fechas..." required></textarea>
+              <button type="submit" class="btn btn-success mt-2">formatear fechas</button>
+              <button type="button" class="btn btn-secondary mt-2 clean">Limpiar</button>
+            </form>
+          </div>
+        </div>
+        <div class="card mt-3 d-none results" id="resultContainerFormatDatesCard">
+          <div class="card-header text-center bg-primary text-white bg-secondary">
+            <h5>Fechas formateadas</h5>
+          </div>
+          <div class="card-body" id="resultContainerFormatDates">
+          </div>
+        </div>
+      </div>
+      
       <!-- Menú descarga citas -->
-      <div class="tab-pane fade show active" id="dowloadDates" role="tabpanel" aria-labelledby="dowloadDates-tab">
+      <div class="tab-pane fade" id="dowloadDates" role="tabpanel" aria-labelledby="dowloadDates-tab">
         <div class="card">
           <div class="card-header text-center bg-primary text-white">
-            <h5>IPS</h5>
+            <h5>Descargar citas</h5>
           </div>
           <div class="card-body">
             <form id="formDownloadDates">
@@ -48,30 +72,6 @@
             <h5>Contenido CSV</h5>
           </div>
           <div class="card-body" id="resultContainerDownloadDates">
-          </div>
-        </div>
-      </div>
-
-      <!-- Menú formatear fehcas -->
-      <div class="tab-pane fade" id="formaDates" role="tabpanel" aria-labelledby="formaDates-tab">
-        <div class="card">
-          <div class="card-header text-center bg-success text-white">
-            <h5>Formatear Fechas</h5>
-          </div>
-          <div class="card-body">
-            <form id="formFormatDates">
-              <label for="ip" class="form-label">Fechas:</label>
-              <textarea class="form-control" id="dates" name="dates" rows="10" placeholder="Escribe o copiar y pega desde excel las fechas..." required></textarea>
-              <button type="submit" class="btn btn-primary mt-2">formatear fechas</button>
-              <button type="button" class="btn btn-secondary mt-2 clean">Limpiar</button>
-            </form>
-          </div>
-        </div>
-        <div class="card mt-3 d-none results" id="resultContainerFormatDatesCard">
-          <div class="card-header text-center bg-primary text-white bg-secondary">
-            <h5>Fechas formateadas</h5>
-          </div>
-          <div class="card-body" id="resultContainerFormatDates">
           </div>
         </div>
       </div>

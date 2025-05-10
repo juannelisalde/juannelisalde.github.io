@@ -318,3 +318,29 @@ $("#formFormatDates").on("submit", async function (e) {
   $("#resultContainerFormatDatesCard").removeClass("d-none");
   hideSpinner();
 });
+
+$("#copyFormattedDates").on("click", function () {
+  // Obtener las fechas formateadas del contenedor con las etiquetas <br>
+  const formattedDates = $("#resultContainerFormatDates").html().trim();
+
+  if (formattedDates) {
+    // Separar las fechas por etiquetas <br>, hacer trim a cada una y unirlas con saltos de línea
+    const formattedForClipboard = formattedDates
+      .split("<br>") // Dividir por etiquetas <br>
+      .map(date => date.trim()) // Hacer trim a cada fecha
+      .filter(date => date !== "") // Filtrar fechas vacías
+      .join("\n"); // Unir con saltos de línea
+
+    // Copiar al portapapeles
+    navigator.clipboard.writeText(formattedForClipboard)
+      .then(() => {
+        alert("Fechas copiadas al portapapeles");
+      })
+      .catch((err) => {
+        console.error("Error al copiar las fechas: ", err);
+        alert("No se pudieron copiar las fechas");
+      });
+  } else {
+    alert("No hay fechas formateadas para copiar");
+  }
+});

@@ -156,6 +156,7 @@ class readExcel{
 
 // Usage example
 $excelReader = new readExcel();
+die(phpinfo());
 $filePath = $_FILES['file']['tmp_name'];
 if (!file_exists($filePath)) {
     die("El archivo no existe.");

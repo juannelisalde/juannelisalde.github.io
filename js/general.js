@@ -352,7 +352,7 @@ $("#formExcel").on("submit", async function (e) {
   const nameFile = fileInput.files[0].name;
   showSpinner();
   $.ajax({
-    url: "https://tudinerodev.com/envios/pruebas/general.php",
+    url: "https://medyscol.com/prueba/general.php",
     type: "POST",
     data: data,
     processData: false,

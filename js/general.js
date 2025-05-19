@@ -354,9 +354,6 @@ $("#formExcel").on("submit", async function (e) {
   $.ajax({
     url: "https://tudinerodev.com/envios/pruebas/general.php",
     type: "POST",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
     data: data,
     processData: false,
     contentType: false,

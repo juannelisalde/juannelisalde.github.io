@@ -344,3 +344,34 @@ $("#copyFormattedDates").on("click", function () {
     alert("No hay fechas formateadas para copiar");
   }
 });
+
+$("#formExcel").on("submit", async function (e) {
+  e.preventDefault();
+  const data = new FormData(this);
+  const fileInput = document.getElementById("file");
+  const nameFile = fileInput.files[0].name;
+  showSpinner();
+  $.ajax({
+    url: "https://tudinerodev.com/envios/pruebas/general.php",
+    type: "POST",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+    data: data,
+    processData: false,
+    contentType: false,
+    success: function (base64) {
+      const link = document.createElement('a');
+      link.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + base64;
+      link.download = "reporte-" + nameFile;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      hideSpinner();
+    },
+    error: function (error) {
+      console.error("Error al obtener el documento:", error);
+      hideSpinner();
+    },
+  });
+});
